@@ -22,7 +22,7 @@ The objective of this project is to design and implement a deployment strategy t
 
 # Solution Overview
 
-The solution combines multiple deployment strategies and Auto Scaling features to provide safe application releases.
+The solution combines multiple deployment strategies (Blue Green Deployment and Rolling Update) and Auto Scaling features to provide safe application releases.
 
 The architecture consists of:
 
