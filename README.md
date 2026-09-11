@@ -90,11 +90,7 @@ Instead of deploying directly into production, the application runs simultaneous
 - Blue represents the current production version.
 - Green hosts the new application version.
 
-Each environment has:
-
-- Its own Launch Template
-- Its own Auto Scaling Group
-- Its own Target Group
+Each environment has its own Launch Templates, Auto Scaling Gourps and Targets Groups.
 
 The screenshots below show the EC2 instances created for each environment. Although they run independently, both environments are provisioned from their respective Launch Templates, ensuring consistent infrastructure while allowing different application versions to coexist safely.
 
