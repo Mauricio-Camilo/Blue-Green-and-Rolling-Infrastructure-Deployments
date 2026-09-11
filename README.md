@@ -45,6 +45,36 @@ The following diagram illustrates the high-level architecture of the zero-downti
 
   ![Diagram](./images/project-architecture.png)
 
+# The Design Decisions Behind Zero-Downtime Deployments
+
+## Why not deploy directly to production?
+
+If every new version replaces the production environment immediately, users become part of the deployment process. Any unexpected issue affects live traffic, and rolling back may take several minutes.
+
+A Blue-Green deployment removes that risk by allowing the new version to run in a completely separate environment. Only after it has been validated does it become the production environment.
+
+## Why isn't having two environments enough?
+
+This was probably the most interesting insight from the project.
+
+Simply running Blue and Green environments doesn't guarantee zero downtime. There must be a mechanism that controls how users move between them.
+
+That's where the **Application Load Balancer** becomes essential. Instead of users connecting directly to EC2 instances, every request passes through the ALB, which can redirect production traffic from one Target Group to another only after the new environment is healthy. The deployment becomes a traffic switch rather than an infrastructure replacement.
+
+## Why use both Blue-Green and Rolling Deployments?
+
+At first glance, they seem to solve the same problem, but they actually address different deployment scenarios.
+
+Blue-Green Deployments focus on safely promoting a completely new application version by switching production traffic between two isolated environments. Rolling Deployments, on the other hand, gradually replace instances within a single Auto Scaling Group while maintaining healthy capacity throughout the update process.
+
+This strategy becomes even more effective when combined with features like **Lifecycle Hooks** and **Warm Pools**. While Rolling Deployments define how instances are replaced, Lifecycle Hooks ensure that instances leave service gracefully by completing in-flight requests before termination, and Warm Pools reduce the time required for replacement instances to become available. Together, these capabilities make instance replacements safer, faster, and more reliable.
+
+## Why not update existing EC2 instances?
+
+Updating running servers makes deployments harder to reproduce and increases the chances of configuration drift over time.
+
+Instead, Launch Templates and Instance Refresh replace existing instances with new ones built from a known configuration. Lifecycle Hooks ensure instances leave service gracefully, while Warm Pools reduce startup time for replacement instances. These decisions make deployments more predictable, safer, and easier to operate as the infrastructure evolves.  
+
 
 # Implementation
 
